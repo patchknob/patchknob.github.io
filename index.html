@@ -246,6 +246,43 @@
       line-height: 1.55;
     }
 
+    .download {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .download-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.08), transparent),
+        rgba(17,19,26,0.78);
+    }
+
+    .download-card h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      letter-spacing: -0.05em;
+    }
+
+    .download-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
     footer {
       display: flex;
       justify-content: space-between;
@@ -261,6 +298,7 @@
       .hero { grid-template-columns: 1fr; padding-top: 40px; }
       .rack-card { transform: none; }
       .grid { grid-template-columns: 1fr; }
+      .download { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -282,7 +320,7 @@
           sampler instruments, VST hosting, Pure Data, Csound, and a Cardinal-style GPU-drawn rack.
         </p>
         <div class="actions">
-          <a class="button" href="https://github.com/knobcore/patchknob/releases/latest">Download latest</a>
+          <a class="button" href="https://github.com/knobcore/patchknob/releases/download/v0.8.7-installer-20260728/PatchKnob-0.8.7-Setup.exe">Download Windows installer</a>
           <a class="button secondary" href="https://github.com/knobcore/patchknob">View source</a>
         </div>
       </div>
@@ -314,8 +352,38 @@
       </article>
     </section>
 
+    <section class="download" id="download">
+      <article class="download-card">
+        <h2>Download PatchKnob</h2>
+        <p>
+          The current Windows installer packages the PatchKnob executable, runtime DLLs, sampler,
+          VST hosting helpers, modular rack support, and fundamental rack module payloads.
+        </p>
+        <div class="actions">
+          <a class="button" href="https://github.com/knobcore/patchknob/releases/download/v0.8.7-installer-20260728/PatchKnob-0.8.7-Setup.exe">PatchKnob-0.8.7-Setup.exe</a>
+          <a class="button secondary" href="https://github.com/knobcore/patchknob/releases/tag/v0.8.7-installer-20260728">Release notes</a>
+        </div>
+        <div class="meta">
+          <span>Version 0.8.7</span>
+          <span>&bull;</span>
+          <span>Windows / NSIS installer</span>
+        </div>
+      </article>
+
+      <article class="download-card">
+        <h2>Support the project</h2>
+        <p>
+          Patreon support helps keep PatchKnob moving. Use it for project support,
+          custom builds, and binary downloads.
+        </p>
+        <div class="actions">
+          <a class="button" href="https://www.patreon.com/cw/patchknob">PatchKnob Patreon</a>
+        </div>
+      </article>
+    </section>
+
     <footer>
-      <span>© PatchKnob</span>
+      <span>&copy; PatchKnob</span>
       <span>patchknob.com</span>
     </footer>
   </main>
