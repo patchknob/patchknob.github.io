@@ -268,6 +268,17 @@
       letter-spacing: -0.05em;
     }
 
+    .install {
+      margin: 0 0 14px;
+      padding: 12px 14px;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: .92rem;
+      line-height: 1.6;
+    }
+    .install code { color: inherit; background: none; padding: 0; }
     .download-card p {
       margin: 0 0 18px;
       color: var(--muted);
@@ -307,6 +318,7 @@
     <header>
       <div class="brand"><span class="mark">PK</span> PatchKnob</div>
       <nav>
+        <a class="pill" href="manual/">Manual</a>
         <a class="pill" href="https://github.com/patchknob/patchknob">GitHub</a>
         <a class="pill" href="https://github.com/patchknob/patchknob/releases">Releases</a>
       </nav>
@@ -320,7 +332,8 @@
           sampler instruments, VST hosting, Pure Data, Csound, and a Cardinal-style GPU-drawn rack.
         </p>
         <div class="actions">
-          <a class="button" href="https://github.com/patchknob/patchknob/releases/download/v0.8.7-installer-20260730/PatchKnob-0.8.7-Setup.exe">Download Windows installer</a>
+          <a class="button" href="#download">Download for Linux</a>
+          <a class="button secondary" href="manual/">Manual</a>
           <a class="button secondary" href="https://github.com/patchknob/patchknob">View source</a>
         </div>
       </div>
@@ -356,18 +369,40 @@
       <article class="download-card">
         <h2>Download PatchKnob</h2>
         <p>
-          The current Windows installer packages the PatchKnob executable, runtime DLLs, sampler,
-          VST hosting helpers, modular rack support, and fundamental rack module payloads.
+          Linux packages for 0.8.7. Both install to <code>/usr/lib/patchknob</code> with a
+          <code>patchknob</code> command on your path, and bundle the Csound reference manual
+          the editor and its assistant both read.
         </p>
         <div class="actions">
-          <a class="button" href="https://github.com/patchknob/patchknob/releases/download/v0.8.7-installer-20260730/PatchKnob-0.8.7-Setup.exe">PatchKnob-0.8.7-Setup.exe</a>
-          <a class="button secondary" href="https://github.com/patchknob/patchknob/releases/tag/v0.8.7-installer-20260730">Release notes</a>
-          <a class="button secondary" href="https://github.com/patchknob/patchknob#linux-build">Linux build script</a>
+          <a class="button" href="https://github.com/patchknob/patchknob/releases/download/v0.8.7-linux/patchknob_0.8.7_amd64.deb">Debian / Ubuntu (.deb)</a>
+          <a class="button" href="https://github.com/patchknob/patchknob/releases/download/v0.8.7-linux/patchknob-0.8.7-1-x86_64.pkg.tar.zst">Arch (.pkg.tar.zst)</a>
+          <a class="button secondary" href="https://github.com/patchknob/patchknob/releases/tag/v0.8.7-linux">Release notes</a>
         </div>
         <div class="meta">
           <span>Version 0.8.7</span>
           <span>&bull;</span>
-          <span>Windows installer + Linux source build</span>
+          <span>x86_64</span>
+          <span>&bull;</span>
+          <span>GPL-3.0</span>
+        </div>
+      </article>
+
+      <article class="download-card">
+        <h2>Build from source</h2>
+        <p>
+          The repository is self-contained &mdash; the third-party sources it compiles are
+          vendored, so there is no dependency hunting. Two commands on any recent
+          distribution:
+        </p>
+        <pre class="install"><code>./scripts/install-deps.sh
+./scripts/build.sh</code></pre>
+        <p>
+          <code>install-deps.sh</code> knows Debian/Ubuntu, Fedora/RHEL, Arch, openSUSE and
+          Alpine, and prints the dependency list in generic terms on anything else rather
+          than failing silently.
+        </p>
+        <div class="actions">
+          <a class="button secondary" href="https://github.com/patchknob/patchknob#building-on-linux">Build instructions</a>
         </div>
       </article>
 
