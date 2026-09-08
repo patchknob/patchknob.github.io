@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PatchKnob</title>
-  <meta name="description" content="PatchKnob is a multi-platform SDL DAW and modular synthesis environment with tracker, piano roll, sampler, VST hosting, Pure Data, Csound, and Cardinal-style rack modules.">
+  <meta name="description" content="PatchKnob is a multi-platform SDL DAW and modular synthesis environment with tracker, piano roll, sampler, VST hosting, Pure Data, Csound, Cardinal-style rack modules, and a built-in Claude assistant that writes instruments, parts and whole arrangements.">
   <style>
     :root {
       color-scheme: dark;
@@ -222,7 +222,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 14px;
       margin-top: 22px;
     }
@@ -329,7 +329,9 @@
         <h1>Tracker brain. Modular hands.</h1>
         <p class="lead">
           PatchKnob is a multi-platform SDL DAW and modular synthesis lab with tracker and piano-roll sequencing,
-          sampler instruments, VST hosting, Pure Data, Csound, and a Cardinal-style GPU-drawn rack.
+          sampler instruments, VST hosting, Pure Data, Csound, and a Cardinal-style GPU-drawn rack &mdash;
+          plus a built-in Claude assistant that writes Csound instruments, MIDI parts, automation curves
+          and whole arrangements, every reply validated before it touches your project.
         </p>
         <div class="actions">
           <a class="button" href="#download">Download for Linux</a>
@@ -358,6 +360,10 @@
       <article class="feature">
         <h2>Patch it together</h2>
         <p>Build instruments and effects with VST nodes, rack modules, Pure Data patches, Csound code, and mixer routing.</p>
+      </article>
+      <article class="feature">
+        <h2>Describe it, hear it</h2>
+        <p>Ask Claude for a bassline in the piano roll, a filter sweep in the automation editor, a Csound instrument in the editor, or a whole song from the Generate menu &mdash; notes are validated field by field and code is audited and compiled before anything lands, always one undo step away.</p>
       </article>
       <article class="feature">
         <h2>Built for hacking</h2>
