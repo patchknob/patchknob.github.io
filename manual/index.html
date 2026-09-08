@@ -176,6 +176,15 @@
         <li><a href="#mix-video">Video settings</a></li>
       </ul>
     </li>
+    <li><a href="#ai">The Claude Assistant</a>
+      <ul>
+        <li><a href="#ai-conversations">One conversation per thing</a></li>
+        <li><a href="#ai-pianoroll">Writing notes: the piano roll panel</a></li>
+        <li><a href="#ai-automation">Drawing curves: the automation panel</a></li>
+        <li><a href="#ai-songgen">The Generate menu: a whole song</a></li>
+        <li><a href="#ai-csound">The Csound chat panel</a></li>
+      </ul>
+    </li>
       </ul>
     </nav>
   </aside>
@@ -245,7 +254,8 @@
   </ol>
 
   <h3 id="start-tour">A short tour</h3>
-  <p>The menu bar runs File, Edit, Track, Options, View, A/V, Help; the
+  <p>The menu bar runs File, Edit, Track, Generate, Options, View, A/V,
+  Help; the
   transport strip sits with it at the top, and everything else is a window or
   dock over the Arrange workspace.</p>
   <ul>
@@ -266,6 +276,9 @@
       <strong>transport</strong>, recording, audio/MIDI setup, projects and
       preferences — all in <a href="#mix">Mixing, Recording &amp;
       Setup</a>.</li>
+    <li><strong>Generate</strong> — ask Claude for a whole arrangement, or
+      use its panels in the piano roll, automation editor and Csound editor.
+      Covered in <a href="#ai">The Claude Assistant</a>.</li>
     <li>The View menu also switches the main workspace between
       <strong>Arrange</strong>, <strong>Browse</strong> (the sample and
       plugin browser), <strong>Auto</strong> (automation),
@@ -655,14 +668,14 @@
   <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>F</kbd> (or
   <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd>, for window managers that grab
   the Start key) applies your default fade settings with no dialog.
-  <kbd>Win</kbd>+<kbd>D</kbd> fades from the clip start to the insertion
-  point, <kbd>Win</kbd>+<kbd>G</kbd> from the insertion point to the clip
-  end.</p>
-  <blockquote><kbd>Win</kbd>+<kbd>D</kbd> and <kbd>Win</kbd>+<kbd>G</kbd> have
-  no <kbd>Ctrl</kbd>+<kbd>Alt</kbd> fallback, so on desktops where the Super
-  key is owned by the window manager they may be unreachable from the
-  keyboard; use <code>EDIT</code> &gt; <em>Fade To Start</em> /
-  <em>Fade To End</em> instead.</blockquote>
+  <kbd>Win</kbd>+<kbd>D</kbd> (or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>D</kbd>)
+  fades from the clip start to the insertion point,
+  <kbd>Win</kbd>+<kbd>G</kbd> (or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>G</kbd>)
+  from the insertion point to the clip end — the
+  <kbd>Ctrl</kbd>+<kbd>Alt</kbd> forms exist for desktops where the Super key
+  is owned by the window manager. <code>EDIT</code> &gt;
+  <em>Fade To Start</em> / <em>Fade To End</em> do the same from the
+  menu.</p>
   <p><strong>Shapes and slopes.</strong> Fades come in Standard, S-Curve and
   seven parabolic preset shapes, each with an Equal Gain or Equal Power slope;
   a crossfade's halves are linked Equal Power, Equal Gain, or not at all.
@@ -696,11 +709,9 @@
   fade-out on the right, trimmed to the new boundaries, and clips separated
   out of a crossfade keep their halves as plain fades; OFF, fades touched by
   an edit are dropped.</p>
-  <blockquote>After a project reload, fade settings reappear in the view only
-  on clips restored through freeze records (frozen, recorded and consolidated
-  clips). On a plain audio lane rebound by the loader the view starts with no
-  fade record, so fade handles that existed before the reload can be missing
-  from the display even where the saved region still carries them.</blockquote>
+  <p>Fades are part of the saved region and come back with it: after a
+  project reload every audio lane — frozen, recorded, consolidated or plain —
+  redisplays the fade handles it had before the save.</p>
 
   <h3 id="arrange-loop">The clip loop window</h3>
   <p>Do not confuse two loops that meet on this timeline:</p>
@@ -781,16 +792,16 @@
   <p><kbd>Ctrl</kbd>+<kbd>0</kbd> quantizes the selected clips' start points
   to the grid.</p>
 
-  <blockquote>Known reload caveat: an ordinary audio lane (one not backed by a
-  freeze record) is re-linked to its engine audio after a project load by
-  matching the lane's clip start against the saved regions on its mixer track,
-  to within one tick. This association is recovered heuristically rather than
-  stored, and it is the mechanism behind the fade-display gap noted under
-  <a href="#arrange-fades">fades</a>. Historically these lanes did not rebind
-  at all — edits on a freshly loaded audio lane silently did nothing — so if a
-  loaded audio clip ever refuses to split or trim, this is the machinery that
-  failed; save and reload, and check the clip still sits where its region
-  starts.</blockquote>
+  <blockquote>Reload note: an ordinary audio lane (one not backed by a freeze
+  record) stores its link to its engine audio in the project file, so after a
+  load it rebinds exactly — placement, gain, loop window and
+  <a href="#arrange-fades">fades</a> included. Projects saved by older
+  versions carry no stored link; for those the loader falls back to matching
+  the lane's clip start against the saved regions on its mixer track, to
+  within one tick. Historically these lanes did not rebind at all — edits on
+  a freshly loaded audio lane silently did nothing — so if a clip from a very
+  old project ever refuses to split or trim, re-save it: the current format
+  records the association.</blockquote>
 </section>
 
 <section data-title="Sequencing &amp; Composition">
@@ -918,14 +929,17 @@
       <tr><td><kbd>-</kbd> / <kbd>=</kbd>, or <kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Edit step down / up (1–8)</td></tr>
       <tr><td><kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>→</kbd></td><td>Previous / next LPB value</td></tr>
       <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td><td>Follow playback (cursor pinned to the playhead)</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>M</kbd></td><td>Mute the cursor's note column (visual)</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>M</kbd></td><td>Mute the cursor's note column (playback + display)</td></tr>
       <tr><td><kbd>Shift</kbd>+<kbd>L</kbd> / <kbd>Ctrl</kbd>+<kbd>L</kbd> / <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>L</kbd></td><td>Loop on/off · loop from selection · clear loop window</td></tr>
       <tr><td><kbd>Esc</kbd></td><td>Cancel selection and silence preview notes</td></tr>
     </tbody>
   </table>
-  <blockquote><p><kbd>Ctrl</kbd>+<kbd>M</kbd> column mute is a
-  <strong>visual</strong> marker only: the engine still plays every event in
-  the pattern. Do not rely on it to silence a column during playback.</p></blockquote>
+  <blockquote><p><kbd>Ctrl</kbd>+<kbd>M</kbd> column mute is a real
+  <strong>playback</strong> mute: the engine drops the muted column's note-ons
+  at its emit funnel, and a note the column is holding when you mute is
+  released immediately. Unmuting takes effect from the column's next note-on.
+  The dimmed display and the silenced notes are driven by the same per-pattern
+  flag, so they can never disagree.</p></blockquote>
 
   <h3 id="seq-piano">The piano roll</h3>
   <p>The piano roll shows the same pattern horizontally: a bar/beat ruler on
@@ -933,7 +947,9 @@
   (click a key to preview it), the note grid, and a data lane underneath for
   velocities. Six tools sit on the number keys — <kbd>1</kbd> edit,
   <kbd>2</kbd> draw, <kbd>3</kbd> erase, <kbd>4</kbd> select, <kbd>5</kbd>
-  zoom, <kbd>6</kbd> pan.</p>
+  zoom, <kbd>6</kbd> pan. The toolbar's <em>AI</em> button slides out the
+  Claude panel, which writes notes into the clip from a description — see
+  <a href="#ai-pianoroll">the piano roll panel</a>.</p>
 
   <h4>Entering and editing notes</h4>
   <ul>
@@ -1050,7 +1066,9 @@
   arrangement. Double-click one to open the automation editor: a toolbar, a
   bar/beat ruler, and a stack of <strong>lanes</strong>, each binding one
   target parameter to a breakpoint curve. Values are normalised 0–1 and mapped
-  onto the target's real range at playback.</p>
+  onto the target's real range at playback. The toolbar's <em>AI</em> button
+  slides out the Claude panel, which draws curves from a description — see
+  <a href="#ai-automation">the automation panel</a>.</p>
 
   <h4>Lanes</h4>
   <p>The <code>+</code> toolbar button adds a lane and opens the target picker
@@ -1122,9 +1140,13 @@
   trim into the curve, and the handles at the top of each lane edit the same
   loop window the pattern owns. The curve drawn on the arrange clip is sampled
   from the same data that plays, repeats included.</p>
-  <blockquote><p>Automation clips have no one-shot mode: a clip dragged longer
-  than its loop window always repeats the curve, even where a note clip with
-  looping off would fall silent.</p></blockquote>
+  <blockquote><p>Automation clips carry the same loop / one-shot switch note
+  clips have (the clip context menu's <em>Loop On / Loop Off (1-Shot)</em>
+  row), saved with the project. With looping off, a clip dragged longer than
+  its loop window plays the curve once and then <em>holds its final value</em>
+  for the rest of the clip — the automation analogue of a one-shot note clip
+  falling silent — instead of restarting the sweep. The curve drawn on the
+  arrange clip shows the hold, not phantom repeats.</p></blockquote>
 
   <h4 id="seq-lane-track">Track lanes versus automation clips</h4>
   <p>The engine holds automation in two places. An <strong>automation
@@ -1133,11 +1155,12 @@
   runs in absolute song time for the whole arrangement, independent of any
   clip. Both play back, both are saved with the project, and both are honoured
   when a track is frozen or bounced.</p>
-  <blockquote><p>In the current shell, the automation editor only ever opens
-  bound to an automation <em>clip</em> (double-click one in the arrangement).
-  Track lanes play, save and freeze correctly if a project contains them, but
-  there is no menu or window that opens the editor on a track's own lane set —
-  in practice, clips are how you write automation.</p></blockquote>
+  <blockquote><p>The automation editor opens two ways: double-click an
+  automation <em>clip</em> in the arrangement to edit that clip's lanes, or
+  right-click empty space on a lane and choose <em>Track Automation</em> to
+  open the editor on that track's own lane set — the lanes that run in
+  absolute song time for the whole arrangement, independent of any
+  clip.</p></blockquote>
 
   <h3 id="seq-targets">What can be automated</h3>
   <p>An automation lane (and a tracker FX column — they share one target
@@ -1214,17 +1237,31 @@
   <h4>How a note picks a zone</h4>
   <p>On note-on, the engine considers every zone whose key range covers the
   played note and whose velocity range covers the note's velocity, skipping
-  zones flagged as note-off layers. Among the candidates it plays the
-  <strong>one</strong> zone whose root key is nearest the played note (ties go
-  to the earlier zone). Overlapping zones therefore do not stack: exactly one
-  zone sounds per note.</p>
-  <blockquote><p>The per-zone overlap mode shown in the zone context menu
-  (<em>Overlap: play all / cycle / random</em>) is stored, saved with the
-  project and round-trips faithfully — but the playback engine never consults
-  it. Whatever mode you pick, a note plays the single nearest-root zone.
-  Likewise, a zone marked as a <em>note-off layer</em> is correctly excluded
-  from note-on triggering, but nothing currently triggers it when the note is
-  released — the flag mutes the zone rather than deferring it.</p></blockquote>
+  zones flagged as note-off layers. The matching zones form the note's
+  <strong>zone group</strong>, and the overlap mode of the group's nearest-root
+  member (ties go to the earlier zone) decides what plays:</p>
+  <ul>
+    <li><em>Play all</em> layers every zone in the group, one voice each.</li>
+    <li><em>Cycle</em> round-robins through the group, one zone per note; the
+    position is remembered per group across notes (it is playback state, not
+    saved with the project).</li>
+    <li><em>Random</em> picks one zone of the group at random.</li>
+  </ul>
+  <p>A group with a single member plays that zone whatever its mode, so a
+  conventional non-overlapping multisample behaves exactly as it always
+  has.</p>
+  <p>A zone marked as a <em>note-off layer</em> is excluded from note-on
+  triggering and instead fires when the note is <strong>released</strong>: it
+  plays at the releasing note's pitch, at the release velocity when the
+  note-off carries one and the note-on velocity otherwise. Where several
+  note-off layers match, they select among themselves with the same three
+  overlap modes. A release layer always plays itself out — its own amplitude
+  envelope shapes it start to finish when it has one; without one, a looped
+  layer plays once through to the end of its sample.</p>
+  <blockquote><p>Known limitation: a note-off layer fires only when the note
+  is still sounding at note-off. A one-shot zone that has already played to
+  its end leaves nothing for the key-up to release, so no release sample fires
+  for it.</p></blockquote>
 
   <h3 id="smp-keymap">The key map</h3>
   <p>The key map draws every zone as a rectangle on a grid of keys (horizontal)
@@ -1323,13 +1360,15 @@
   region and each slice becomes a one-key zone on the next key up, named
   <code>name [slice N]</code>. Moving a marker rebuilds the regions but
   preserves any root/key/velocity edits you made to individual slices.</p>
-  <blockquote><p>The shell's hand-editing path manages at most 128 zones. A
-  SoundFont import bypasses it and can install thousands of zones, and the
-  editor will happily select and edit any of them — parameter and envelope
-  edits reach every zone — but a <em>mapping</em> or <em>structural</em> edit
-  (move, resize, add, delete) is only re-pushed to the engine for the first
-  128 zones. On a large imported bank, treat the key map as read-mostly and do
-  mapping surgery before or during import, not after.</p></blockquote>
+  <blockquote><p>There is no longer a zone-count ceiling on hand editing:
+  every zone owns a stable engine slot, so a mapping or structural edit
+  (move, resize, add, delete) anywhere in a multi-thousand-zone imported
+  bank reaches the engine and touches only the zone it belongs to —
+  unchanged zones are never cleared or re-uploaded. One practical note
+  remains: a <em>bulk</em> remap (spread selection, distribute across keys)
+  over thousands of imported zones re-pushes each affected zone's audio
+  through the engine, which takes noticeably longer than a single-zone edit
+  but is safe and non-destructive.</p></blockquote>
 
   <h3 id="smp-envelopes">Envelopes and the per-zone filter</h3>
   <h4>Instrument envelopes (AMP, PIT, CUT, RES, PAN)</h4>
@@ -1423,11 +1462,22 @@
   suggests, and why selecting a zone for the first time can do a little
   work. Editing one zone's audio affects only that zone: the engine copies
   never mutate shared buffers.</p>
-  <blockquote><p>The import engine supports two options — a hard cap on zones
-  loaded (a cheap preview import) and collapsing redundant velocity layers —
-  but no UI currently exposes them: every import runs uncapped with layers
-  intact. Also, SF2's "loop until release" mode (sampleModes 3) is imported
-  as a plain sustained loop; the until-release distinction is not kept.</p></blockquote>
+  <p>Two import options live in the Sampler browser's right-click menu and
+  apply to every preset imported afterwards: <em>Import: preview (128
+  zones)</em> caps the import for a cheap audition of a heavy bank, and
+  <em>Import: collapse velocity layers</em> drops zones whose velocity range
+  an earlier layer over the same keys already covers. The import status line
+  reports what each option skipped.</p>
+  <blockquote><p>SF2's "loop until release" mode (sampleModes 3) still
+  imports as a plain sustained loop, and precisely this happens: an imported
+  looping zone holds its loop through the amplitude envelope's release stage
+  (imported zones always carry their own envelope, and a zone with its own
+  envelope keeps looping while it releases), so the sample tail past the
+  loop end is never played. The playback engine has no "exit the loop on
+  release, then play the tail" mode to map sampleModes 3 onto. The import
+  counts these zones in its status line ("loop-until-release, played as
+  sustained loop") rather than converting them silently, and an export
+  writes them back as ordinary loops (sampleModes 1).</p></blockquote>
 
   <h3 id="smp-sf2-export">SoundFont export</h3>
   <p>The engine contains a full SF2 writer aimed at two audiences at once.
@@ -1450,11 +1500,20 @@
   worst-case error so a caller can warn before writing, not after. A 24-bit
   option writes the SF2.04 <code>sm24</code> chunk (low bytes of 24-bit
   samples); older readers ignore it and play the 16-bit data.</p>
-  <blockquote><p>As of this writing the export is engine-only: the writer,
-  the 24-bit path and the <code>PKST</code> round-trip are implemented and
-  covered by tests, but no menu item or button in the UI invokes them yet.
-  There is currently no way to export a patch to SF2 from inside the
-  program.</p></blockquote>
+  <p>To export from inside the program, right-click the key map and choose
+  <em>Export SoundFont…</em> (or <em>Export SoundFont (24-bit)…</em> for the
+  <code>sm24</code> variant), then pick a destination. Every zone is written
+  with its mapping, loop, tuning, pan, attenuation, filter and per-zone
+  envelopes; zones sharing a sample share one pool entry, and stereo zones
+  become linked left/right halves that PatchKnob's own importer merges back
+  into a stereo zone.</p>
+  <blockquote><p>The UI path writes standard chunks only: the shell does not
+  yet serialise the FX tail, column setup or drawn instrument envelopes into
+  the <code>PKST</code> private chunk, so those do not survive an export
+  (the per-zone DAHDSR envelopes do). A zone with no per-zone envelope
+  exports with the SF2 default instant envelope — the instrument-wide drawn
+  curves have no SF2 generator to live in — and the export status line
+  counts such zones.</p></blockquote>
 
   <h3 id="smp-editor">The sample editor</h3>
   <p>One sample editor serves the whole program: it edits anything that holds
@@ -1532,23 +1591,27 @@
   or press <kbd>Esc</kbd> to clear). Rows are drag sources: drop a file on
   the editor to load it, or drop a soundfont preset row on the Sampler
   window to import it.</p>
-  <blockquote><p>The browser lists more formats than the sample loader can
-  decode: loading goes through a WAV-only reader (16/24/32-bit PCM and
-  32-bit float RIFF/WAVE), so <code>aif</code>, <code>flac</code>,
-  <code>ogg</code> and <code>mp3</code> rows appear in the list but fail
-  with a load error when you try to use them. Stick to WAV for now.</p></blockquote>
+  <blockquote><p>The browser and the loader now agree by construction: the
+  listing is built from the set of formats the loader can genuinely decode.
+  WAV keeps the native reader; <code>aif</code>/<code>aiff</code>,
+  <code>flac</code> and <code>ogg</code> decode through the bundled
+  libsndfile, and <code>mp3</code> appears only in builds whose libsndfile
+  found an MPEG decoder. A format this build cannot decode is simply not
+  listed — no row exists just to fail. Everything is resampled to the engine
+  rate with the same band-limited resampler the WAV path uses.</p></blockquote>
   <h4>The Sampler window's library</h4>
-  <p>The Sampler's own left-hand pane is a simpler list: folders, WAV files
-  and soundfonts only. Clicking a WAV previews its waveform and auditions it
-  (click inside the preview to play from that position); clicking a preset
-  row inside an expanded soundfont imports it immediately. Keys while the
+  <p>The Sampler's own left-hand pane is a simpler list: folders, audio
+  files the loader can decode (the same set the Sample Editor's browser
+  lists) and soundfonts. Clicking an audio file previews its waveform and
+  auditions it (click inside the preview to play from that position);
+  clicking a preset row inside an expanded soundfont imports it immediately. Keys while the
   browser pane is active: <kbd>Up</kbd>/<kbd>Down</kbd> step and audition,
   <kbd>PgUp</kbd>/<kbd>PgDn</kbd> page, <kbd>Home</kbd>/<kbd>End</kbd> jump,
   <kbd>Backspace</kbd> parent folder, <kbd>F5</kbd> rescan,
   <kbd>Space</kbd> re-audition, <kbd>Enter</kbd> re-select. A breadcrumb
   drive menu switches roots (drive letters on Windows, <code>/</code>
   elsewhere). The pane says <em>why</em> it is empty — an unreadable folder
-  and a folder with no WAVs report differently. Press-and-drag a row past a
+  and a folder with no audio files report differently. Press-and-drag a row past a
   small threshold to pick it up and drop it on the key map, a zone row, or
   the zone list; an ordinary click never starts a drag.</p>
 </section>
@@ -1841,6 +1904,14 @@ f 0 86400
   macros, arrays and plugin opcodes are <em>skipped</em> rather than guessed
   at, because a false complaint would train you to ignore the checker and waste
   a correction round. Everything it does report should be a real defect.</p>
+  <p>The panel keeps <strong>one conversation per Csound node</strong> (and
+  per rack scripting module): open a different node and the transcript
+  switches with it, switch back and your conversation resumes. A reply still
+  streaming when you switch keeps going into the conversation that asked for
+  it, and auto-apply is suppressed while that conversation is off screen, so
+  code can never land in a document it was not written for. The rule, and
+  its caveats, are described in
+  <a href="#ai-conversations">one conversation per thing</a>.</p>
   <p><strong>Backends.</strong> <em>SET..</em> opens the settings window. The
   default backend is <em>Claude Code</em>: PatchKnob shells out to a locally
   installed <code>claude</code> executable and spends your existing
@@ -2091,9 +2162,14 @@ f 0 86400
   together, and each locate or stop also releases every sounding note
   (an automatic MIDI panic), so nothing hangs.</p>
 
-  <blockquote>There is no global keyboard shortcut for play/stop. Transport
-  control is by the on-screen buttons (plus the arrange view's shuttle keys,
-  described in the arrangement section).</blockquote>
+  <p><kbd>Space</kbd> is the global play/stop toggle. It is deliberately
+  polite about focus: while you are typing in a text field the space is typed,
+  not played; editors that use <kbd>Space</kbd> themselves (the sample
+  editors' audition, the arrange shuttle) keep it; and while the tracker,
+  piano roll or a code editor window is front-most, plain keys stay with its
+  edit cursor. Everywhere else, <kbd>Space</kbd> starts or stops the
+  transport (with count-in honoured, exactly like the Play/Stop
+  buttons).</p>
 
   <h4>Count-in</h4>
   <p>With count-in enabled, Play and Record first run a four-beat click
@@ -2293,13 +2369,12 @@ f 0 86400
   like any other project clip, and the frozen lane comes back after a load
   with its waveform and its link to the source, so Unfreeze still works.</p>
   <p><strong>File &gt; Render to WAV...</strong> is the whole-mix bounce: it
-  plays the project once in real time, taps every master block, and writes a
-  16-bit stereo WAV.</p>
-  <blockquote>Render to WAV currently writes to a fixed file name,
-  <code>render.wav</code>, in the directory PatchKnob was started from —
-  there is no file picker — and it estimates the capture length from pattern
-  lengths assuming 120 BPM, so at slower tempos the tail of a long project
-  can be cut off. Check the result.</blockquote>
+  asks where to save (the picker remembers your last render location and
+  name), plays the project once in real time, taps every master block, and
+  writes a 16-bit stereo WAV. The capture length is computed from the
+  timeline's real end — the furthest pattern or arranged clip — through the
+  project's actual tempo map, plus a one-second tail so nothing released on
+  the final beat is clipped.</p>
 
   <h3 id="mix-audio-settings">Audio settings</h3>
   <p>Open <strong>A/V &gt; Audio Settings...</strong>. The window is a list of
@@ -2318,13 +2393,16 @@ f 0 86400
     <li><strong>Buffer Size (latency)</strong> — 64 to 65536 frames in powers
       of two. 512 is the default. Smaller is lower latency and higher CPU
       risk; if you hear crackles, go up a step.</li>
+    <li><strong>Sample Rate</strong> — 22.05 to 192&nbsp;kHz (48&nbsp;kHz is
+      the default). Applied like every other row: the engine stops, reopens at
+      the new rate and re-prepares everything. If the device refuses the rate
+      you pick, the engine falls back to a rate it can open rather than going
+      silent — the row marked <code>*</code> afterwards is the rate actually
+      running.</li>
   </ul>
   <p>Choices persist in <code>~/.config/patchknob/audio_preferences.txt</code>
   (on Windows, <code>%APPDATA%\PatchKnob\</code>) and are restored by name at
   the next launch.</p>
-  <blockquote>The sample rate (default 48&nbsp;kHz) is stored in that
-  preferences file but has no row in the Audio Settings window; to change it,
-  quit PatchKnob and edit the <code>sample_rate=</code> line by hand.</blockquote>
   <p><strong>If the device is lost</strong> — unplugged, or the server went
   away — the engine notices the stream dying and PatchKnob automatically
   reopens on the default output device. If you started with no working device
@@ -2399,7 +2477,7 @@ f 0 86400
 
 <h3 id="mix-projects">Projects</h3>
   <p><strong>File &gt; New / Open... / Save / Save As...</strong> Projects are
-  single <code>.s24</code> files, currently format version 20. Older versions
+  single <code>.s24</code> files, currently format version 23. Older versions
   load and are migrated (including pre-v13 files written at the old
   192-PPQN resolution). Saves are atomic and flushed to disk before the old
   file is replaced.</p>
@@ -2453,9 +2531,10 @@ f 0 86400
   (<code>~/.config/patchknob/</code> and the SDL preferences path).</p>
 
   <h4>The Claude assistant settings</h4>
-  <p><strong>A/V &gt; Claude Settings...</strong> (also reachable from the
-  chat panel's SET.. button) configures the assistant that writes Csound
-  instruments in the Csound editor. Two backends:</p>
+  <p><strong>A/V &gt; Claude Settings...</strong> (also reachable from every
+  AI panel's settings button) configures <a href="#ai">the Claude
+  assistant</a> — one setting set shared by the Csound chat panel, the piano
+  roll and automation panels, and the Generate window. Two backends:</p>
   <ul>
     <li><strong>Claude Code</strong> (the default) runs your locally installed
       Claude Code CLI and spends your existing subscription. No API key is
@@ -2504,6 +2583,264 @@ f 0 86400
   says so if it is not found. Start and stop recording from the chip at the
   right end of the transport bar; settings changed while recording apply to
   the next take.</p>
+</section>
+
+<section data-title="The Claude Assistant">
+  <h2 id="ai">The Claude Assistant</h2>
+  <p>Claude is built into PatchKnob in four places: the
+  <a href="#mod-csound-ai">Csound editor's chat panel</a>, a
+  MIDI-generation panel in the <a href="#ai-pianoroll">piano roll</a>, a
+  curve-generation panel in the <a href="#ai-automation">automation
+  editor</a>, and a <a href="#ai-songgen">Generate menu</a> that builds a
+  whole arrangement. All four share one settings window
+  (<a href="#mix-prefs">A/V &gt; Claude Settings...</a> — also on the
+  Generate menu, and behind every panel's settings button) and one backend: either the locally installed
+  Claude Code CLI spending your existing subscription, or the Anthropic API
+  with your own key. If neither is available, each panel shows a plain notice
+  saying what is missing; nothing else breaks.</p>
+  <p>They also share one design rule: <strong>a reply is validated data, not
+  trusted prose</strong>. Notes, curves and plans come back against a JSON
+  schema and every field is checked, clamped or dropped before anything
+  reaches the project — with the repairs and drops counted in the transcript,
+  never swallowed. Csound goes further: it is audited against the shipped
+  opcode manual and compiled by the real compiler before it is applied. And
+  every apply is one undo step: a single <kbd>Ctrl</kbd>+<kbd>Z</kbd> takes
+  back an entire generation, however large.</p>
+  <p>The assistant is compiled into all desktop builds; the Android build
+  omits it.</p>
+
+  <h3 id="ai-conversations">One conversation per thing</h3>
+  <p>Every distinct thing the assistant edits keeps <strong>its own
+  conversation</strong>: each note clip, each automation lane (and,
+  separately, each lane set in multi-lane mode), each Csound node, each rack
+  scripting module, and the song generator's plan and each of its instrument
+  agents. Switch to a different clip and the transcript switches with it;
+  switch back and your conversation — including a result still waiting for
+  Apply — is exactly where you left it.</p>
+  <p>This is not cosmetic. With one shared transcript, turn two about
+  instrument B arrives carrying turn one about instrument A, and the model
+  edits the wrong thing. Keyed conversations make follow-ups ("same thing but
+  slower", "now an octave down") mean what you think they mean, because the
+  history behind them is about the thing on screen and nothing else.</p>
+  <p>Two consequences worth knowing:</p>
+  <ul>
+    <li>Switching away does <em>not</em> cancel a reply in flight. The turn
+    keeps streaming into the conversation that asked for it, and its result
+    is staged <em>there</em> — it is never applied to, or offered against,
+    whatever is on screen now.</li>
+    <li><strong>File &gt; New</strong> drops every conversation, including
+    anything in flight: clip 12, lane 2 and node 7 in a new project are not
+    the ones in the old one, and silently re-attaching a transcript to a
+    different thing is worse than losing it. The Generate window also cancels
+    its whole pipeline here, so nothing in flight can materialise into a
+    project it was not asked about.</li>
+  </ul>
+  <blockquote><p>Two honest gaps. Transcripts live in memory only — they are
+  not saved in the project file, and quitting loses them. And while
+  <em>File &gt; New</em> drops all conversations, <em>File &gt; Open...</em>
+  currently does not: after opening a different project, an old transcript
+  keyed to "clip 12" will re-attach to the new project's clip 12, which is a
+  different clip. Until that is fixed, treat cross-project conversations with
+  suspicion.</p></blockquote>
+
+  <h3 id="ai-pianoroll">Writing notes: the piano roll panel</h3>
+  <p>The piano roll's toolbar has an <em>AI</em> button; it slides out a chat
+  panel docked on the right (drag its left edge to resize). Describe a part —
+  "a bassline that fits", "a 16-chord progression that modulates" — and the
+  panel sends your request together with a context it gathers from the live
+  project at that moment:</p>
+  <ul>
+    <li>tempo, meter, resolution, and the clip's length (an empty clip sends
+    no length, so the model chooses one);</li>
+    <li>the notes already in this clip <em>and</em> the notes every other
+    active track plays in the same span, so "harmonise this" and "jam with
+    this" are answered against the actual material, not in a vacuum;</li>
+    <li>the harmonic timeline — the project's stored chord map when one
+    exists, else a chord map detected from the material, else a detected key.
+    A progression that modulates has no single key, and writing every part
+    against the first one is exactly the bug this ordering prevents;</li>
+    <li>a description of the existing material's rhythmic character — a raw
+    note list says what was played, not what it feels like;</li>
+    <li>and, when your own words ask for polyrhythm or cross-rhythm, the
+    tuplet arithmetic for the project's resolution, spelled out.</li>
+  </ul>
+  <p>The reply is parsed and validated note by note: out-of-range velocities
+  and lengths running past the clip end are clamped and counted, unusable
+  notes are dropped and counted, and a reply whose notes <em>all</em> failed
+  is refused outright — your clip is untouched. A validated result is staged
+  with <em>APPLY (REPLACE)</em> and <em>APPLY (ADD)</em> buttons; the
+  highlighted default is replace when the clip was empty and add when it was
+  not. Replace touches only notes (CC and pitch-bend events are left alone),
+  the clip grows if the generation is longer, and the whole apply is one
+  undo step — the panel's own <em>UNDO</em> button pops it too, restoring
+  the clip length and the project chord map alongside the notes.</p>
+  <h4>Transforms</h4>
+  <p>The <em>TRANSFORM</em> menu applies named operations locally, no model
+  involved, to the current selection (or the whole clip when nothing is
+  selected): Transpose ±12/+7, Invert pitch, Retrograde, Augment ×2,
+  Diminish ÷2, Displace a beat, Quantise 1/16, Humanise, and Conform to key.
+  The model knows the same vocabulary — a request like "make it more
+  interesting" may come back naming a transform instead of re-typing notes,
+  and the panel runs it locally with no second round trip.</p>
+  <h4>The chord map</h4>
+  <p>When an applied clip carries a real progression — at least two chord
+  spans — its detected chord map is stored on the project, so the
+  <em>next</em> generation (in any clip, and in the
+  <a href="#ai-songgen">Generate window</a>) follows the same changes,
+  modulations included. A thinner reading never clobbers a richer one: the
+  new map must have at least as many spans as the one already stored, so a
+  generated bassline cannot overwrite the 16-chord spine it was written
+  against.</p>
+
+  <h3 id="ai-automation">Drawing curves: the automation panel</h3>
+  <p>The automation clip editor (see
+  <a href="#seq-lane-track">automation editing</a>) has the same slide-out
+  panel behind its <em>AI</em> button. Describe a movement — "open the filter
+  over four bars and snap it shut on the last beat" — and the panel sends the
+  tick domain, the clip length, the curve already on the selected lane, the
+  notes on the track, and the project chord map.</p>
+  <p>A toggle in the panel header picks one of <strong>two target
+  modes</strong>:</p>
+  <ul>
+    <li><strong>LANE</strong> (the default) — the reply is one curve for the
+    selected lane, and the model is given no parameter menu at all, so it can
+    never route a curve to a parameter by guessing a name.</li>
+    <li><strong>ALL</strong> — the request carries a menu of the clip's
+    lanes, each with its real units and range, and the model answers with
+    indices into that menu ("lane 0 and lane 3"). An index pointing outside
+    the menu is dropped, and the drop is shown in the transcript — never
+    silently rerouted.</li>
+  </ul>
+  <p>Curve values travel normalised 0..1 and are mapped onto each lane's own
+  range exactly once, at the point where they are written. A value the model
+  put outside the rails is clamped back and counted — a clamp means the model
+  asked for something a real parameter cannot do, and you should see that it
+  was caught.</p>
+  <h4>Local shapes — no round trip</h4>
+  <p>An obvious request is answered instantly, without the model: "a 4-bar
+  triangle LFO on this" is built locally, as are ramps and fades, and
+  invert / snap / flatten of the existing curve. The LFO shapes are sine,
+  triangle, saw up, saw down, square and sample-and-hold. The model can also
+  <em>name</em> a shape in its reply instead of typing out sixty-four
+  breakpoints it would get subtly wrong; the panel builds the named shape
+  locally before validation. Square and sample-and-hold are always applied
+  with step interpolation, so the steps stay steps.</p>
+  <p>Apply goes through the editor's own edit path behind one undo step.
+  Conversations are kept per lane (<em>ALL</em> mode is its own
+  conversation), and the panel re-keys every frame, so a lane switch made
+  anywhere — a click in the editor, a rebind from the arrange view — moves
+  the transcript with it before your next send. A pending curve is only
+  offered for Apply while the conversation that produced it is on screen.</p>
+
+  <h3 id="ai-songgen">The Generate menu: a whole song</h3>
+  <p><strong>Generate &gt; Generate Song...</strong> opens a window with one
+  composer box. Describe the song — genre, mood, instrumentation, whatever
+  you would tell a collaborator — and press <em>SEND</em>. The work runs as
+  a pipeline, and the project builds up as it goes rather than appearing all
+  at once (a whole arrangement does not fit one reply, and asking for it that
+  way used to return truncated JSON and nothing else):</p>
+  <ol>
+    <li><strong>Plan.</strong> One small request returns the plan: title,
+    genre, tempo, key, meter, sections, and up to eight instruments — each
+    carrying <em>how</em> it should be synthesised, not just a name (see
+    <a href="#ai-songgen-methods">below</a>). An unusable plan is sent back
+    for correction; the parsed plan is summarised in the transcript.</li>
+    <li><strong>Skeleton.</strong> The moment the plan lands, PatchKnob
+    creates the tracks, the Csound nodes, the MIDI wiring and the mixer
+    strips — the full audible chain — with a small placeholder instrument on
+    each node that compiles and makes a sound on exactly the channel and
+    instrument number the plan assigned. You watch the arrangement appear
+    instead of a spinner, and the project is playable from this point on.</li>
+    <li><strong>Voices.</strong> One agent per instrument, each with its own
+    conversation and worker, writes the Csound for its own node — at most
+    four run at once. Every draft is audited against the shipped opcode
+    manual and dry-compiled by the real Csound compiler (on a worker thread,
+    so the UI never stalls); diagnostics go back to the agent for up to two
+    correction rounds. A finished instrument replaces the placeholder on its
+    node, live. One that still will not compile <strong>keeps its
+    placeholder</strong> and is reported by name with the compiler's
+    diagnostic — it never sinks the rest of the song.</li>
+    <li><strong>Parts.</strong> One request per track writes its clip,
+    against the plan and the harmonic spine — and against the clips the
+    earlier parts already produced, since the context is re-gathered before
+    each request. Notes are validated exactly as in the piano roll panel,
+    clamps and drops counted.</li>
+  </ol>
+  <p>The status board in the transcript tracks every instrument through
+  writing / compiling / retrying / done. <em>SEND</em> becomes
+  <em>STOP</em> while the pipeline runs; stopping (or a failure) leaves
+  whatever was finished — the skeleton is already playable, so a cancelled
+  generation is still a project, not a mess. The whole pipeline is
+  <strong>one undo step</strong>: a single <kbd>Ctrl</kbd>+<kbd>Z</kbd>
+  removes skeleton, instruments and clips together.</p>
+  <p>The harmonic spine works both ways: a project chord map stored earlier
+  (say, by a progression you generated in the piano roll) outranks anything
+  the window detects and is never overwritten; a project with no spine gets
+  the plan's, so every later generation follows the same changes. Sending a
+  new description runs the whole pipeline again — as a fresh set of tracks
+  on top of what is there — and the plan conversation carries over, so a
+  follow-up like "the same but slower and darker" is understood against the
+  previous plan.</p>
+  <p>Two invisible guarantees exist because their absence is a silent-failure
+  bug that actually shipped: every generated instrument is
+  <code>massign</code>ed by the <em>host</em> to exactly the channel its
+  track plays on (whatever the model wrote, including inside a whole
+  document returned against instructions), and the score always keeps an
+  <code>f 0</code> keep-alive. Both failures compile cleanly and play
+  absolute silence, which is precisely why they are not left to trust.</p>
+
+  <h4 id="ai-songgen-methods">Synthesis methods and physical models</h4>
+  <p>The plan does not say "a bass"; it says <em>how the bass is built</em>.
+  This is the field that decides whether the result sounds designed or
+  generic: the same instrument name is a completely different patch depending
+  on the method, and each method points the instrument's agent at a vetted
+  palette of Csound opcodes that actually suit it. The methods:</p>
+  <table>
+    <thead><tr><th>Method</th><th>What it means</th></tr></thead>
+    <tbody>
+      <tr><td>Subtractive</td><td>Oscillators into a filter — the default
+      for most parts (<code>vco2</code>, <code>moogladder</code>,
+      <code>diode_ladder</code>...).</td></tr>
+      <tr><td>FM</td><td>Frequency modulation: bells, electric pianos, hard
+      basses (<code>foscili</code>, <code>fmrhode</code>,
+      <code>fmbell</code>...).</td></tr>
+      <tr><td>Additive</td><td>Summed partials; organ-like, precise spectra
+      (<code>gbuzz</code>, <code>buzz</code>...).</td></tr>
+      <tr><td>Wavetable</td><td>Scanned tables, evolving timbre
+      (<code>oscilikt</code>, <code>ftgen</code>...).</td></tr>
+      <tr><td>Granular</td><td>Clouds, textures, time-stretched material
+      (<code>partikkel</code>, <code>grain3</code>,
+      <code>syncgrain</code>...).</td></tr>
+      <tr><td>Physical model</td><td>A model of a real vibrating thing — see
+      below.</td></tr>
+      <tr><td>Percussion</td><td>Noise + envelope + resonant body
+      (<code>mpulse</code>, <code>mode</code>, <code>resonz</code>...).</td></tr>
+      <tr><td>Sampled</td><td>Sample playback opcodes (<code>diskin2</code>,
+      <code>loscil3</code>...). The pipeline still realises this as Csound on
+      the instrument's node; it does not fill the built-in sampler.</td></tr>
+      <tr><td>Noise</td><td>Filtered noise: wind, sweeps, risers
+      (<code>pinkish</code>, <code>butterbp</code>...).</td></tr>
+    </tbody>
+  </table>
+  <p>A physical model additionally names <em>what</em> is being modelled —
+  plucked, bowed or struck string, blown pipe, reed, brass, struck bar,
+  plate, membrane, bell, vocal, or friction — and its agent is pointed at the
+  matching family of waveguide and modal opcodes (<code>wgpluck</code>,
+  <code>wgbow</code>, <code>wgflute</code>, <code>wgclar</code>,
+  <code>barmodel</code>, <code>mode</code>, <code>fof</code>...), with the
+  instruction to drive the model the way the object is actually played and
+  let its own resonance make the timbre. Every opcode in every palette is
+  checked against the shipped Csound manual by the test suite, so the
+  pipeline can never drift into recommending an opcode that does not
+  exist.</p>
+
+  <h3 id="ai-csound">The Csound chat panel</h3>
+  <p>The oldest of the four surfaces lives in the Csound editor and is
+  documented with it: see <a href="#mod-csound-ai">the Csound
+  assistant</a> for the full audit-and-compile pipeline, auto-apply rules
+  and backend setup. It follows the same conversation rule as everything
+  here — one conversation per Csound node (and per rack scripting module),
+  switching as you open different nodes.</p>
 </section>
 
     <a class="toplink" href="#">Back to top</a>
